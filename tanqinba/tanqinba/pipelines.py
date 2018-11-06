@@ -10,11 +10,7 @@ conn = sqlite3.connect('tanqinba.db')
 cursor = conn.cursor()
 class TanqinbaPipeline(object):
 
-    #def __init__(self):
-        #cursor.execute('create table tanqinba (id INTEGER primary key AUTOINCREMENT, piano_url varchar(20),'
-                     # 'piano_name varchar(20),piano_des varchar(800),piano_singer varchar(20),'
-                      #'piano_seeNum varchar(20),piano_collectNum varchar(20),piano_hard varchar(20),'
-                      #'piano_uploadUser varchar(20),piano_uploadTime varchar(20))')
+
 
     def process_item(self, item, spider):
 
@@ -28,5 +24,17 @@ class TanqinbaPipeline(object):
             '''
         cursor.execute(sql,{'pi_url':item['url'],'pi_name':item['name'],'pi_des':item['des'],'pi_singer':item['singer'],'pi_seeNum':item['seeNum'],'pi_collectNum':item['collectNum'],'pi_hard':item['hard'],'pi_uploadUser':item['user'],'pi_uploadTime':item['time']})
 
+        sql2 = '''
+            insert into comment 
+            (score_id, comment_user,comment_date,comment_content) 
+            values 
+            (:co_id, :co_user,:co_date,:co_content)
+            '''
+
+        row = cursor.execute("SELECT * from tanqinba WHERE piano_url=:piano_url",{'piano_url':item['url']})
+        id = 0
+        for r in row:
+            id = r[0]
+        cursor.execute(sql2,{'co_id':id,'co_user':item['commentUser'],'co_date':item['commentDate'],'co_content':item['commentContent']})
         conn.commit()
 

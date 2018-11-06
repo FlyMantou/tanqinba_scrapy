@@ -19,4 +19,7 @@ class TanqinbaItem(scrapy.Item):
     hard = scrapy.Field()
     user = scrapy.Field()
     time = scrapy.Field()
+    commentUser = scrapy.Field()
+    commentDate = scrapy.Field()
+    commentContent = scrapy.Field()
     pass
